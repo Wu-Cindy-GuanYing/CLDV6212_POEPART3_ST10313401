@@ -23,31 +23,32 @@ builder.Services.AddDbContext<AuthDbContext>(options =>
 });
 
 // -----------------------------------------------------------
-// 3) Azure Functions API Clients (Combined Approach)
+// 3) Azure Functions API Clients (CORRECTED)
 // -----------------------------------------------------------
 
 // Primary FunctionsApiClient with interface registration
 builder.Services.AddHttpClient<IFunctionsApi, FunctionsApiClient>((sp, client) =>
 {
     var cfg = sp.GetRequiredService<IConfiguration>();
-    var baseUrl = cfg["FunctionApi:BaseUrl"] ?? "http://localhost:7092";
+    var baseUrl = cfg["FunctionApi:BaseUrl"] ?? "https://localhost:7167";
 
     client.BaseAddress = new Uri(baseUrl.TrimEnd('/') + "/api/");
     client.Timeout = TimeSpan.FromMinutes(5);
     client.DefaultRequestHeaders.Add("Accept", "application/json");
+
+    // Log the configuration for debugging
+    var logger = sp.GetRequiredService<ILogger<Program>>();
+    logger.LogInformation("FunctionsApiClient configured with BaseAddress: {BaseAddress}", client.BaseAddress);
 });
 
-// StorageInitializationService with HttpClient configuration
-builder.Services.AddHttpClient<IStorageInitializationService, StorageInitializationService>(client =>
-{
-    var baseUrl = builder.Configuration["FunctionApi:BaseUrl"] ?? "http://localhost:7092";
-    client.BaseAddress = new Uri(baseUrl.TrimEnd('/') + "/api/");
-    client.Timeout = TimeSpan.FromMinutes(5);
-});
+// Register services in the correct order
+builder.Services.AddScoped<IDataSeedingService, DataSeedingService>();
+builder.Services.AddScoped<IManualStorageInitializationService, ManualStorageInitializationService>();
 
-// Register as hosted service for auto-initialization
+// Register StorageInitializationService as singleton and hosted service (ONCE)
+builder.Services.AddSingleton<StorageInitializationService>();
 builder.Services.AddHostedService(provider =>
-    (StorageInitializationService)provider.GetRequiredService<IStorageInitializationService>());
+    provider.GetRequiredService<StorageInitializationService>());
 
 // Scoped registration for direct usage
 builder.Services.AddScoped<FunctionsApiClient>();
@@ -129,7 +130,27 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 // -----------------------------------------------------------
-// 11) Routes
+// 11) Apply Database Migrations Automatically
+// -----------------------------------------------------------
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+        await dbContext.Database.MigrateAsync();
+
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogInformation("Database migrations applied successfully");
+    }
+    catch (Exception ex)
+    {
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while applying database migrations");
+    }
+}
+
+// -----------------------------------------------------------
+// 12) Routes
 // -----------------------------------------------------------
 app.MapControllerRoute(
     name: "default",

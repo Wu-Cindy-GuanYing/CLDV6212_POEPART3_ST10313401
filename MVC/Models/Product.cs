@@ -24,23 +24,12 @@ namespace ABCRetailers.Models
 
         [Required(ErrorMessage = "Price is required")]
         [Display(Name = "Price")]
-        public string PriceString { get; set; } = string.Empty;
-
-        [Display(Name = "Price")]
-        public double Price
-        {
-            get
-            {
-                return double.TryParse(PriceString, out var result) ? result : 0.0;
-            }
-            set
-            {
-                PriceString = value.ToString("F2");
-            }
-        }
+        [Range(0.01, double.MaxValue, ErrorMessage = "Price must be greater than 0")]
+        public double Price { get; set; }
 
         [Required]
         [Display(Name = "Stock Available")]
+        [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative")]
         public int StockAvailable { get; set; }
 
         [Display(Name = "Image URL")]

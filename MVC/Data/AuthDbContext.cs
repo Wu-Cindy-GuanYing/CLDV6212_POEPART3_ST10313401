@@ -1,38 +1,53 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ABCRetailers.Models;
+﻿using ABCRetailers.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ABCRetailers.Data
 {
     public class AuthDbContext : DbContext
     {
-        public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options) { }
+        public AuthDbContext(DbContextOptions<AuthDbContext> options) : base(options)
+        {
+        }
 
-        public DbSet<User> Users => Set<User>();
-        public DbSet<Cart> Cart => Set<Cart>();
-        // Remove: public DbSet<Order> Orders => Set<Order>();
+        public DbSet<User> Users { get; set; }
+        public DbSet<Cart> Cart { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure User entity (has Azure Table properties with [NotMapped])
+            base.OnModelCreating(modelBuilder);
+
+            // Configure User entity
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasKey(u => u.Id);
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(50);
+                entity.Property(e => e.PasswordHash)
+                    .IsRequired();
+                entity.Property(e => e.Role)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasDefaultValue("Customer");
 
-                // Only ignore properties that actually exist and are [NotMapped]
-                entity.Ignore(u => u.PartitionKey);
-                entity.Ignore(u => u.RowKey);
-                entity.Ignore(u => u.Timestamp);
-                entity.Ignore(u => u.ETag);
+                entity.HasIndex(e => e.Username)
+                    .IsUnique();
             });
 
-            // Configure Cart entity (does NOT have Azure Table properties)
+            // Configure Cart entity
             modelBuilder.Entity<Cart>(entity =>
             {
-                entity.HasKey(c => c.Id); // Make sure Cart has an Id property
-                // No Ignore calls needed since Cart doesn't have Azure Table properties
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.CustomerUsername)
+                    .IsRequired()
+                    .HasMaxLength(100);
+                entity.Property(e => e.ProductId)
+                    .IsRequired()
+                    .HasMaxLength(100);
+                entity.Property(e => e.Quantity)
+                    .IsRequired()
+                    .HasDefaultValue(1);
             });
-
-            base.OnModelCreating(modelBuilder);
         }
     }
 }

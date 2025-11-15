@@ -7,33 +7,27 @@ namespace ABCRetailers.Models
 {
     public class Order : ITableEntity
     {
-        internal string? CustomerEmail;
-
-        // Azure Table Properties - Ignored by EF
-        [NotMapped]
+        // Azure Table Properties
         public string PartitionKey { get; set; } = "Order";
-
-        [NotMapped]
         public string RowKey { get; set; } = Guid.NewGuid().ToString();
-
-        [NotMapped]
         public DateTimeOffset? Timestamp { get; set; }
-
-        [NotMapped]
         public ETag ETag { get; set; }
 
         [Display(Name = "Order ID")]
         public string OrderId => RowKey;
 
         [Required]
-        [Display(Name = "Customer")]
+        [Display(Name = "Customer ID")]
         public string CustomerId { get; set; } = string.Empty;
 
         [Display(Name = "Username")]
         public string Username { get; set; } = string.Empty;
 
+        [Display(Name = "Customer Email")]
+        public string CustomerEmail { get; set; } = string.Empty;
+
         [Required]
-        [Display(Name = "Product")]
+        [Display(Name = "Product ID")]
         public string ProductId { get; set; } = string.Empty;
 
         [Display(Name = "Product Name")]
@@ -62,6 +56,7 @@ namespace ABCRetailers.Models
         public string Status { get; set; } = "Submitted";
     }
 
+    // Move this outside the Order class
     public enum OrderStatus
     {
         Submitted,

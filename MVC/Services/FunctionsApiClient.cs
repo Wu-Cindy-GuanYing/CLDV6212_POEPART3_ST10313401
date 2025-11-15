@@ -24,21 +24,53 @@ namespace ABCRetailers.Services
         {
             try
             {
+                _logger.LogInformation("🔍 Attempting to get entities from table: {TableName}", tableName);
+
                 var response = await _httpClient.GetAsync($"table/{tableName}");
-                response.EnsureSuccessStatusCode();
+
+                _logger.LogInformation("📡 Response Status for {TableName}: {StatusCode}", tableName, response.StatusCode);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    _logger.LogWarning("❌ Table {TableName} not found (404). The Azure Function endpoint might not be working.", tableName);
+                    return new List<T>();
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("⚠️ Request failed with status: {StatusCode} for table {TableName}",
+                        response.StatusCode, tableName);
+                    return new List<T>();
+                }
 
                 var json = await response.Content.ReadAsStringAsync();
+
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    _logger.LogInformation("📭 Empty response for table {TableName}", tableName);
+                    return new List<T>();
+                }
+
+                _logger.LogInformation("✅ Successfully received data for {TableName}: {JsonLength} characters",
+                    tableName, json.Length);
+
                 var entities = JsonSerializer.Deserialize<List<T>>(json, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
 
+                _logger.LogInformation("📊 Deserialized {Count} entities from {TableName}", entities?.Count ?? 0, tableName);
                 return entities ?? new List<T>();
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "🌐 HTTP error getting entities from table {TableName}. Azure Functions may be unavailable.", tableName);
+                return new List<T>();
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting all entities from table {TableName}", tableName);
-                throw;
+                _logger.LogError(ex, "💥 Unexpected error getting all entities from table {TableName}", tableName);
+                return new List<T>();
             }
         }
 
@@ -77,7 +109,7 @@ namespace ABCRetailers.Services
         {
             try
             {
-                
+
                 return await AddEntityAsync("Customers", customer);
             }
             catch (Exception ex)
@@ -142,7 +174,7 @@ namespace ABCRetailers.Services
         {
             try
             {
-               
+
                 var response = await _httpClient.GetAsync($"table/Products/{productId}");
 
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
@@ -240,6 +272,7 @@ namespace ABCRetailers.Services
 
                 content.Add(streamContent, "file", file.FileName);
 
+                // FIX: Call the correct route - blob/{containerName}
                 var response = await _httpClient.PostAsync($"blob/{containerName}", content);
                 response.EnsureSuccessStatusCode();
 

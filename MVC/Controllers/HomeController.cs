@@ -58,7 +58,7 @@ namespace ABCRetailers.Controllers
 
   
         // ADMIN DASHBOARD
-        
+
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminDashboard()
         {
@@ -117,16 +117,14 @@ namespace ABCRetailers.Controllers
                 return View();
             }
         }
-        
+
        
         //  PRIVACY PAGE (Public)
     
         [AllowAnonymous]
         public IActionResult Privacy() => View();
 
- 
-        //  STORAGE INITIALIZATION (Admin)
-  
+
         [AllowAnonymous]
         //[Authorize(Roles = "Admin")]
         [HttpPost]
@@ -134,25 +132,28 @@ namespace ABCRetailers.Controllers
         {
             try
             {
-                // Test connectivity to all services
+                var initializationService = HttpContext.RequestServices.GetRequiredService<IManualStorageInitializationService>();
+                await initializationService.InitializeStorageAsync();
+
+                // Get updated counts using the FunctionsApi directly
                 var products = await _functionsApi.GetAllEntitiesAsync<Product>("Products") ?? new List<Product>();
                 var customers = await _functionsApi.GetAllEntitiesAsync<Customer>("Customers") ?? new List<Customer>();
                 var orders = await _functionsApi.GetAllEntitiesAsync<Order>("Orders") ?? new List<Order>();
 
-                TempData["Success"] = $"Azure Functions connected successfully! Loaded {products.Count} products, {customers.Count} customers, and {orders.Count} orders.";
+                TempData["Success"] = $"Storage initialized successfully! Loaded {products.Count} products, {customers.Count} customers, and {orders.Count} orders.";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error initializing storage connectivity");
-                TempData["Error"] = $"Failed to connect to Azure Functions: {ex.Message}";
+                _logger.LogError(ex, "Error initializing storage");
+                TempData["Error"] = $"Failed to initialize storage: {ex.Message}";
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        
+
         // HEALTH CHECK (Public)
-                [AllowAnonymous]
+        [AllowAnonymous]
         public async Task<IActionResult> Health()
         {
             try
@@ -198,27 +199,5 @@ namespace ABCRetailers.Controllers
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
             });
         }
-
-        /*
-        //temporary fix: bypass azure functions
-        // SIMPLE ADMIN DASHBOARD (no Azure Functions)
-        [Authorize(Roles = "Admin")]
-        public IActionResult AdminDashboard()
-        {
-            // Simple version without Azure Functions data
-            ViewBag.Message = "Welcome to Admin Dashboard";
-            return View();
-        }
-
-        // SIMPLE CUSTOMER DASHBOARD (no Azure Functions)  
-        [Authorize(Roles = "Customer")]
-        public IActionResult CustomerDashboard()
-        {
-            // Simple version without Azure Functions data
-            ViewBag.Message = "Welcome to Customer Dashboard";
-            return View();
-        }
-
-        */
     }
 }

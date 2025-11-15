@@ -64,23 +64,35 @@ namespace ABCRetailers.Controllers
                     return View(model);
                 }
 
-                // 20 Fetch customer record from Azure Function
-                var customer = await _functionsApi.GetCustomerByUsernameAsync(user.Username);
+                string customerId = string.Empty;
 
-                if (customer == null)
+                // 20 Fetch customer record from Azure Function ONLY for Customer role
+                if (user.Role == "Customer")
                 {
-                    _logger.LogWarning("No matching customer found in Azure for username {Username}", user.Username);
-                    ViewBag.Error = "No customer record found in the system.";
-                    return View(model);
+                    var customer = await _functionsApi.GetCustomerByUsernameAsync(user.Username);
+
+                    if (customer == null)
+                    {
+                        _logger.LogWarning("No matching customer found in Azure for username {Username}", user.Username);
+                        ViewBag.Error = "No customer record found in the system.";
+                        return View(model);
+                    }
+
+                    customerId = customer.CustomerId;
+                }
+                else
+                {
+                    // For Admin users, use a default or empty customer ID
+                    customerId = "ADMIN"; // or string.Empty, or "N/A" - whatever makes sense
                 }
 
                 // 30 Build authentication claims
                 var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Role, user.Role),
-                    new Claim("CustomerId", customer.CustomerId)
-                };
+        {
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Role, user.Role),
+            new Claim("CustomerId", customerId) // This will be empty for Admin
+        };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
@@ -98,7 +110,7 @@ namespace ABCRetailers.Controllers
                 // 50 Store session data
                 HttpContext.Session.SetString("Username", user.Username);
                 HttpContext.Session.SetString("Role", user.Role);
-                HttpContext.Session.SetString("CustomerId", customer.CustomerId);
+                HttpContext.Session.SetString("CustomerId", customerId);
 
                 // 60 Redirect appropriately
                 if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
