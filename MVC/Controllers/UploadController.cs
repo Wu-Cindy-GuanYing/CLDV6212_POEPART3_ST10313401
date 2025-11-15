@@ -52,8 +52,8 @@ namespace ABCRetailers.Controllers
 
             return View(model);
         }
-    
-    public class BlobUploadResult
+
+        public class BlobUploadResult
         {
             public string BlobUrl { get; set; }
         }

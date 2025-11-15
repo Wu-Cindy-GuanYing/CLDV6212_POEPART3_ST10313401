@@ -127,7 +127,8 @@ namespace ABCRetailers.Controllers
  
         //  STORAGE INITIALIZATION (Admin)
   
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> InitializeStorage()
         {

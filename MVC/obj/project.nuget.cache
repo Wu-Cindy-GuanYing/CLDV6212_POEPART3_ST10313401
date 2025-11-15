@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "iFXOaF9u9/Y=",
+  "dgSpecHash": "pXFPIRQME8k=",
   "success": true,
-  "projectFilePath": "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\MVC\\ABCRetailers.csproj",
+  "projectFilePath": "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\MVC\\ABCRetailers.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\lab_services_student\\.nuget\\packages\\azure.core\\1.47.3\\azure.core.1.47.3.nupkg.sha512",
     "C:\\Users\\lab_services_student\\.nuget\\packages\\azure.data.tables\\12.11.0\\azure.data.tables.12.11.0.nupkg.sha512",

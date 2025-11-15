@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\MVC\\ABCRetailers.csproj": {}
+    "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\MVC\\ABCRetailers.csproj": {}
   },
   "projects": {
-    "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\ABCRetailersFunction\\ABCRetailersFunction.csproj": {
+    "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\ABCRetailersFunction\\ABCRetailersFunction.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\ABCRetailersFunction\\ABCRetailersFunction.csproj",
+        "projectUniqueName": "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\ABCRetailersFunction\\ABCRetailersFunction.csproj",
         "projectName": "ABCRetailersFunction",
-        "projectPath": "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\ABCRetailersFunction\\ABCRetailersFunction.csproj",
+        "projectPath": "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\ABCRetailersFunction\\ABCRetailersFunction.csproj",
         "packagesPath": "C:\\Users\\lab_services_student\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\ABCRetailersFunction\\obj\\",
+        "outputPath": "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\ABCRetailersFunction\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -118,14 +118,14 @@
         }
       }
     },
-    "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\MVC\\ABCRetailers.csproj": {
+    "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\MVC\\ABCRetailers.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\MVC\\ABCRetailers.csproj",
+        "projectUniqueName": "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\MVC\\ABCRetailers.csproj",
         "projectName": "ABCRetailers",
-        "projectPath": "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\MVC\\ABCRetailers.csproj",
+        "projectPath": "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\MVC\\ABCRetailers.csproj",
         "packagesPath": "C:\\Users\\lab_services_student\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\MVC\\obj\\",
+        "outputPath": "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\MVC\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -146,8 +146,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\ABCRetailersFunction\\ABCRetailersFunction.csproj": {
-                "projectPath": "C:\\Users\\lab_services_student\\Desktop\\cldv-part-3\\ABCRetailersFunction\\ABCRetailersFunction.csproj"
+              "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\ABCRetailersFunction\\ABCRetailersFunction.csproj": {
+                "projectPath": "C:\\Users\\lab_services_student\\Desktop\\CLDV6212_POEPART3_ST10313401\\ABCRetailersFunction\\ABCRetailersFunction.csproj"
               }
             }
           }

@@ -12,6 +12,6 @@ namespace ABCRetailers.Models.ViewModels
 
         [Required(ErrorMessage = "Please select your role.")]
         public string Role { get; set; } = string.Empty; // admin or customer
-        public string ReturnUrl { get; set; }
+        public string? ReturnUrl { get; set; }
     }
 }
