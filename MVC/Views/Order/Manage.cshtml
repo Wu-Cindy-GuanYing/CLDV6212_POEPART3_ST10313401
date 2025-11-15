@@ -1,0 +1,76 @@
+﻿﻿@model IEnumerable<ABCRetailers.Models.Order>
+
+@{
+    ViewData["Title"] = "Manage Orders";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-cog"></i> Manage Orders</h2>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Customer</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Update</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.Username</td>
+                        <td>@order.ProductName</td>
+                        <td>@order.Quantity</td>
+                        <td>
+                            <span class="badge bg-@(GetStatusBadgeClass(order.Status))">
+                                @order.Status
+                            </span>
+                        </td>
+                        <td>
+                            <form asp-action="UpdateStatus" method="post">
+                                <input type="hidden" name="id" value="@order.RowKey" />
+                                <select name="status" class="form-select">
+                                    @foreach (var status in Enum.GetValues(typeof(OrderStatus)))
+                                    {
+                                        <option value="@status" selected="@(status.Equals(order.Status))">@status</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-primary mt-1">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No orders found to manage.
+    </div>
+}
+
+@{
+    string GetStatusBadgeClass(string status) => status?.ToLower() switch
+    {
+        "submitted" => "primary",
+        "processing" => "info",
+        "completed" => "success",
+        "cancelled" => "danger",
+        _ => "secondary"
+    };
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
